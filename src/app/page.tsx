@@ -94,7 +94,7 @@ export default function Component() {
                 <CardContent>
                   <p className="text-muted-foreground">
                     Edit and refine the AI-generated descriptions to perfectly
-                    match your property's unique features and style.
+                    match your property&apos;s unique features and style.
                   </p>
                 </CardContent>
               </Card>
@@ -134,7 +134,7 @@ export default function Component() {
                 <h3 className="text-xl font-bold mb-2">Get Description</h3>
                 <p className="text-muted-foreground">
                   Receive a professionally written description highlighting your
-                  property's best attributes.
+                  property&apos;s best attributes.
                 </p>
               </div>
             </div>
