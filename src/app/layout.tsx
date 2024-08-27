@@ -1,7 +1,9 @@
 import "./globals.css";
 
+import { Analytics } from "@vercel/analytics/react";
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import clsx from "clsx";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,7 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={clsx(inter.className, "dark")}>{children}</body>
+      <body className={clsx(inter.className, "dark")}>
+        {children}
+        <SpeedInsights />
+        <Analytics />
+      </body>
     </html>
   );
 }
