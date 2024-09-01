@@ -6,11 +6,6 @@ import { db } from "./database/connection";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db) as Adapter,
-  callbacks: {
-    authorized: async ({ auth }) => {
-      return !!auth;
-    },
-  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
