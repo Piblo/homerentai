@@ -18,3 +18,5 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
   ],
 });
+
+export const BASE_PATH = "/api/auth";
