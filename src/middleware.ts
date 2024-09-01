@@ -1,3 +1,7 @@
-export { default } from "next-auth/middleware";
-
-export const config = { matcher: ["/generate-description"] };
+export { auth as middleware } from "@/server/auth";
+export const config = {
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/generate-description",
+  ],
+};
