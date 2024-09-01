@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+import { auth } from "@/server/auth";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 
@@ -6,7 +8,11 @@ type CompletionRequest = {
   language: string;
 };
 
-export async function POST(req: Request) {
+export const POST = auth(async (req) => {
+  if (!req.auth) {
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
+  }
+
   const { images } = (await req.json()) as CompletionRequest;
 
   const result = await streamText({
@@ -40,4 +46,4 @@ export async function POST(req: Request) {
   });
 
   return result.toDataStreamResponse();
-}
+});
