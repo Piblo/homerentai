@@ -1,0 +1,1 @@
+ALTER TABLE "image" DROP COLUMN IF EXISTS "updated_at";

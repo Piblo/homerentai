@@ -1,11 +1,15 @@
+import { db, poolDb } from "@/server/database/connection";
+import {
+  descriptions,
+  images as imagesTable,
+  subscriptions,
+} from "@/server/database/schema";
 import { eq, sql } from "drizzle-orm";
 
 import { NextResponse } from "next/server";
 import { auth } from "@/server/auth";
-import { db } from "@/server/database/connection";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
-import { subscriptions } from "@/server/database/schema";
 
 type CompletionRequest = {
   images: string[];
@@ -13,12 +17,12 @@ type CompletionRequest = {
 };
 
 export const POST = auth(async (req) => {
-  if (!req.auth) {
+  if (!req.auth?.user?.id) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
   const subscription = await db.query.subscriptions.findFirst({
-    where: eq(subscriptions.userId, req.auth.user?.id!),
+    where: eq(subscriptions.userId, req.auth.user.id),
   });
 
   if ((subscription?.remainingDescriptions ?? 0) <= 0) {
@@ -33,6 +37,34 @@ export const POST = auth(async (req) => {
   const result = await streamText({
     model: openai("gpt-4o-mini"),
     maxTokens: 300,
+    async onFinish({ text }) {
+      await db
+        .update(subscriptions)
+        .set({
+          remainingDescriptions: sql`${subscriptions.remainingDescriptions} - 1`,
+        })
+        .where(eq(subscriptions.userId, req.auth?.user?.id!));
+
+      await poolDb.transaction(async (tx) => {
+        const [description] = await tx
+          .insert(descriptions)
+          .values({
+            userId: req.auth?.user?.id!,
+            text: text,
+            title: text.split("**").at(1),
+          })
+          .returning({
+            id: descriptions.id,
+          });
+
+        await tx.insert(imagesTable).values(
+          images.map((image) => ({
+            descriptionId: description.id,
+            url: image,
+          }))
+        );
+      });
+    },
     messages: [
       {
         role: "system",
@@ -59,13 +91,6 @@ export const POST = auth(async (req) => {
       },
     ],
   });
-
-  await db
-    .update(subscriptions)
-    .set({
-      remainingDescriptions: sql`${subscriptions.remainingDescriptions} - 1`,
-    })
-    .where(eq(subscriptions.userId, req.auth.user?.id!));
 
   return result.toDataStreamResponse();
 });

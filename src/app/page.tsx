@@ -30,7 +30,7 @@ export default function Component() {
               </div>
               <div className="space-x-4">
                 <Button asChild>
-                  <Link href="/generate-description">Get Started</Link>
+                  <Link href="/descriptions">Get Started</Link>
                 </Button>
                 <Button variant="outline">Learn More</Button>
               </div>

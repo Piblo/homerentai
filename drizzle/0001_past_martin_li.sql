@@ -1,0 +1,1 @@
+ALTER TABLE "image" ADD COLUMN "updated_at" timestamp;

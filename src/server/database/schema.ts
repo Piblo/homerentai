@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import type { AdapterAccount } from "next-auth/adapters";
+import { relations } from "drizzle-orm";
 import { ulid } from "ulid";
 
 export const users = pgTable("user", {
@@ -31,6 +32,36 @@ export const subscriptions = pgTable("subscription", {
     .notNull()
     .default(10),
 });
+
+export const descriptions = pgTable("description", {
+  id: text("id").primaryKey().$defaultFn(ulid),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  text: text("text").notNull().default(""),
+  title: text("title").notNull().default(""),
+});
+
+export const descriptionRelations = relations(descriptions, ({ many }) => ({
+  images: many(images),
+}));
+
+export const images = pgTable("image", {
+  id: text("id").primaryKey().$defaultFn(ulid),
+  descriptionId: text("description_id")
+    .references(() => descriptions.id, { onDelete: "cascade" })
+    .notNull(),
+  url: text("url").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const imageRelations = relations(images, ({ one }) => ({
+  description: one(descriptions, {
+    fields: [images.descriptionId],
+    references: [descriptions.id],
+  }),
+}));
 
 export const accounts = pgTable(
   "account",

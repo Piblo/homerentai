@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1725292667168,
+      "tag": "0000_fearless_vector",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1725292728240,
+      "tag": "0001_past_martin_li",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1725292757068,
+      "tag": "0002_sweet_dakota_north",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1725293697114,
+      "tag": "0003_icy_plazm",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1725294100852,
+      "tag": "0004_watery_madame_masque",
+      "breakpoints": true
+    }
+  ]
+}

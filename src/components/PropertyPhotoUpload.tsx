@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { compressImage } from "@/utils/image";
-import { getPreSignedUrl } from "@/app/generate-description/actions";
+import { getPreSignedUrl } from "@/app/descriptions/actions";
 import { useCompletion } from "ai/react";
 import { useLogger } from "./Logger";
 
@@ -64,7 +64,7 @@ export function PropertyPhotoUpload() {
       push("Uploading images...");
       const uploadedImages = await Promise.all(
         images.map(async (image) => {
-          const compressedImage = await compressImage(image.file, 0.25);
+          const compressedImage = await compressImage(image.file, 0.5);
           push(`Original image size ${image.file.size} bytes`);
           push(`Compressed image size ${compressedImage.size} bytes`);
 
@@ -110,7 +110,7 @@ export function PropertyPhotoUpload() {
   const loading = isLoading || imageUploading;
 
   return (
-    <div className="container mx-auto p-4 max-w-3xl">
+    <div className="max-w-3xl">
       <Card>
         <CardHeader>
           <CardTitle>Upload property photos</CardTitle>
