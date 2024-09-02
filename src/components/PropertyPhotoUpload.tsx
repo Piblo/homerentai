@@ -64,7 +64,7 @@ export function PropertyPhotoUpload() {
       push("Uploading images...");
       const uploadedImages = await Promise.all(
         images.map(async (image) => {
-          const compressedImage = await compressImage(image.file, 0.5);
+          const compressedImage = await compressImage(image.file, 0.25);
           push(`Original image size ${image.file.size} bytes`);
           push(`Compressed image size ${compressedImage.size} bytes`);
 
@@ -75,6 +75,8 @@ export function PropertyPhotoUpload() {
             push(`Error uploading image ${error}`);
             return;
           }
+
+          push("Uploading image to S3...");
 
           await fetch(result.url, {
             method: "PUT",
