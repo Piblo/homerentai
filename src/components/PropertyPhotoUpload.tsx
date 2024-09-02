@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { compressImage } from "@/utils/image";
 import { getPreSignedUrl } from "@/app/generate-description/actions";
 import { useCompletion } from "ai/react";
 
@@ -60,14 +61,16 @@ export function PropertyPhotoUpload() {
       setImageUploading(true);
       const uploadedImages = await Promise.all(
         images.map(async (image) => {
-          const { error, result } = await getPreSignedUrl(image.file.type);
+          const compressedImage = await compressImage(image.file, 0.1);
+
+          const { error, result } = await getPreSignedUrl(compressedImage.type);
           if (error !== undefined) return;
 
           await fetch(result.url, {
             method: "PUT",
-            body: image.file,
+            body: compressedImage,
             headers: {
-              "Content-Type": image.file.type,
+              "Content-Type": compressedImage.type,
             },
           });
 
@@ -81,6 +84,7 @@ export function PropertyPhotoUpload() {
         body: { images: uploadedImages, language: navigator.language },
       });
     } catch (err) {
+      setImageUploading(false);
       setError(
         "An error occurred while generating the description. Please try again."
       );
