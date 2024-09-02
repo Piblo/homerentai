@@ -1,7 +1,11 @@
+import { eq, sql } from "drizzle-orm";
+
 import { NextResponse } from "next/server";
 import { auth } from "@/server/auth";
+import { db } from "@/server/database/connection";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
+import { subscriptions } from "@/server/database/schema";
 
 type CompletionRequest = {
   images: string[];
@@ -11,6 +15,17 @@ type CompletionRequest = {
 export const POST = auth(async (req) => {
   if (!req.auth) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
+  }
+
+  const subscription = await db.query.subscriptions.findFirst({
+    where: eq(subscriptions.userId, req.auth.user?.id!),
+  });
+
+  if ((subscription?.remainingDescriptions ?? 0) <= 0) {
+    return NextResponse.json(
+      { message: "No remaining descriptions" },
+      { status: 403 }
+    );
   }
 
   const { images } = (await req.json()) as CompletionRequest;
@@ -44,6 +59,13 @@ export const POST = auth(async (req) => {
       },
     ],
   });
+
+  await db
+    .update(subscriptions)
+    .set({
+      remainingDescriptions: sql`${subscriptions.remainingDescriptions} - 1`,
+    })
+    .where(eq(subscriptions.userId, req.auth.user?.id!));
 
   return result.toDataStreamResponse();
 });

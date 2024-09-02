@@ -1,6 +1,7 @@
 import {
   boolean,
   integer,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
@@ -16,6 +17,19 @@ export const users = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+});
+
+export const subscriptionType = pgEnum("subscription_type", ["free"]);
+
+export const subscriptions = pgTable("subscription", {
+  id: text("id").primaryKey().$defaultFn(ulid),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  type: subscriptionType("type").notNull().default("free"),
+  remainingDescriptions: integer("remaining_descriptions")
+    .notNull()
+    .default(10),
 });
 
 export const accounts = pgTable(

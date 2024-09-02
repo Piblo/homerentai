@@ -14,35 +14,39 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getPreSignedUrl } from "@/app/generate-description/actions";
 import { useCompletion } from "ai/react";
 
+type Image = {
+  base64: string;
+  file: File;
+  id: string;
+};
+
 export function PropertyPhotoUpload() {
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<Image[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [imageUploading, setImageUploading] = useState(false);
   const { completion, complete, isLoading } = useCompletion();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const filesArray = Array.from(e.target.files);
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files) return;
 
-      filesArray.forEach((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImages((prevPreviews) => [
-            ...prevPreviews,
-            reader.result as string,
-          ]);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  };
+    const filesArray = Array.from(e.target.files);
+    const images = filesArray.map((file) => ({
+      base64: URL.createObjectURL(file),
+      file,
+      id: crypto.randomUUID(),
+    }));
 
-  const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
-  };
+    setImages((existing) => [...existing, ...images]);
+  }
 
-  const handleGenerateDescription = async () => {
+  function removeImage(id: string) {
+    setImages(images.filter((image) => image.id !== id));
+  }
+
+  async function handleGenerateDescription() {
     if (images.length === 0) {
       setError(
         "Please upload at least one image before generating a description."
@@ -53,13 +57,37 @@ export function PropertyPhotoUpload() {
     setError(null);
 
     try {
-      complete("", { body: { images, language: navigator.language } });
+      setImageUploading(true);
+      const uploadedImages = await Promise.all(
+        images.map(async (image) => {
+          const { error, result } = await getPreSignedUrl(image.file.type);
+          if (error !== undefined) return;
+
+          await fetch(result.url, {
+            method: "PUT",
+            body: image.file,
+            headers: {
+              "Content-Type": image.file.type,
+            },
+          });
+
+          return result.imageUrl;
+        })
+      );
+
+      setImageUploading(false);
+
+      complete("", {
+        body: { images: uploadedImages, language: navigator.language },
+      });
     } catch (err) {
       setError(
         "An error occurred while generating the description. Please try again."
       );
     }
-  };
+  }
+
+  const loading = isLoading || imageUploading;
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">
@@ -86,15 +114,15 @@ export function PropertyPhotoUpload() {
             </div>
             {images.length > 0 && (
               <div className="grid grid-cols-3 gap-4">
-                {images.map((preview, index) => (
-                  <div key={index} className="relative">
+                {images.map((image) => (
+                  <div key={image.id} className="relative">
                     <img
-                      src={preview}
-                      alt={`Preview ${index + 1}`}
+                      src={image.base64}
+                      alt=""
                       className="w-full h-32 object-cover rounded-md"
                     />
                     <button
-                      onClick={() => removeImage(index)}
+                      onClick={() => removeImage(image.id)}
                       className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
                     >
                       <X size={16} />
@@ -103,8 +131,8 @@ export function PropertyPhotoUpload() {
                 ))}
               </div>
             )}
-            <Button onClick={handleGenerateDescription} disabled={isLoading}>
-              {isLoading ? (
+            <Button onClick={handleGenerateDescription} disabled={loading}>
+              {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Generating...
