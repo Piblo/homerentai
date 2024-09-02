@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { Analytics } from "@vercel/analytics/react";
 import { Inter } from "next/font/google";
+import { Logger } from "@/components/Logger";
 import type { Metadata } from "next";
 import { Nav } from "@/components/Nav";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -22,10 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={clsx(inter.className, "dark")}>
-        <Nav />
-        {children}
-        <SpeedInsights />
-        <Analytics />
+        <Logger>
+          <Nav />
+          {children}
+          <SpeedInsights />
+          <Analytics />
+        </Logger>
       </body>
     </html>
   );

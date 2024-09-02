@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { compressImage } from "@/utils/image";
 import { getPreSignedUrl } from "@/app/generate-description/actions";
 import { useCompletion } from "ai/react";
+import { useLogger } from "./Logger";
 
 type Image = {
   base64: string;
@@ -29,6 +30,7 @@ export function PropertyPhotoUpload() {
   const [error, setError] = useState<string | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
   const { completion, complete, isLoading } = useCompletion();
+  const { push } = useLogger();
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
@@ -59,12 +61,20 @@ export function PropertyPhotoUpload() {
 
     try {
       setImageUploading(true);
+      push("Uploading images...");
       const uploadedImages = await Promise.all(
         images.map(async (image) => {
           const compressedImage = await compressImage(image.file, 0.5);
+          push(`Original image size ${image.file.size} bytes`);
+          push(`Compressed image size ${compressedImage.size} bytes`);
 
           const { error, result } = await getPreSignedUrl(compressedImage.type);
-          if (error !== undefined) return;
+          push("Generated pre-signed URL");
+
+          if (error !== undefined) {
+            push(`Error uploading image ${error}`);
+            return;
+          }
 
           await fetch(result.url, {
             method: "PUT",
@@ -74,11 +84,15 @@ export function PropertyPhotoUpload() {
             },
           });
 
+          push("Image uploaded");
+
           return result.imageUrl;
         })
       );
 
       setImageUploading(false);
+
+      push("Generating completion...");
 
       complete("", {
         body: { images: uploadedImages, language: navigator.language },
