@@ -61,7 +61,7 @@ export function PropertyPhotoUpload() {
       setImageUploading(true);
       const uploadedImages = await Promise.all(
         images.map(async (image) => {
-          const compressedImage = await compressImage(image.file, 0.1);
+          const compressedImage = await compressImage(image.file, 0.5);
 
           const { error, result } = await getPreSignedUrl(compressedImage.type);
           if (error !== undefined) return;
