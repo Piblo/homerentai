@@ -1,27 +1,28 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { auth, signOut } from "@/server/auth";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 import { Button } from "./ui/button";
+import { DescriptionList } from "./DescriptionList";
 import Link from "next/link";
-import { LogOut } from "lucide-react";
+import { Menu } from "lucide-react";
+import { UserMenu } from "./UserMenu";
 
 export async function Nav() {
-  const session = await auth();
-  const initials = session?.user?.name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("");
-
   return (
     <nav className="py-4 px-6 flex items-center justify-between">
       <ul>
-        <li>
+        <li className="lg:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button size="icon" variant="outline">
+                <Menu />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-full">
+              <DescriptionList />
+            </SheetContent>
+          </Sheet>
+        </li>
+        <li className="hidden lg:block">
           <Link className="font-bold" href="/">
             Home Rent AI
           </Link>
@@ -44,43 +45,7 @@ export async function Nav() {
             How It Works
           </Link>
         </li>
-        {session?.user && (
-          <li>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
-                >
-                  <Avatar className="size-8">
-                    {session.user.image && (
-                      <AvatarImage src={session.user.image} />
-                    )}
-                    <AvatarFallback>{initials}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <form
-                  action={async () => {
-                    "use server";
-                    await signOut();
-                  }}
-                >
-                  <DropdownMenuItem>
-                    <button
-                      type="submit"
-                      className="flex items-center cursor-pointer w-full"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
-                    </button>
-                  </DropdownMenuItem>
-                </form>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </li>
-        )}
+        <UserMenu />
       </ul>
     </nav>
   );

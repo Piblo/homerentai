@@ -1,11 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { MessageSquare, Star, UploadCloud, Wand2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MessageSquare, UploadCloud, Wand2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

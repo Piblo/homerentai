@@ -1,6 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { db } from "@/server/database/connection";
 import { descriptions } from "@/server/database/schema";
@@ -24,14 +21,14 @@ export default async function Description({ params }: Props) {
   }
 
   return (
-    <div className="p-6">
+    <div>
       <h2 className="text-xl mb-4">{description.title}</h2>
 
       <p className="text-muted-foreground max-w-[80ch] mb-4">
         {description.text}
       </p>
 
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {description.images.map((image) => (
           <Image
             key={image.id}
