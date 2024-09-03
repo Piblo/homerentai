@@ -1,8 +1,10 @@
+import { and, eq } from "drizzle-orm";
+
 import { CopyButton } from "./CopyButton";
 import Image from "next/image";
+import { auth } from "@/server/auth";
 import { db } from "@/server/database/connection";
 import { descriptions } from "@/server/database/schema";
-import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 type Props = {
@@ -10,8 +12,12 @@ type Props = {
 };
 
 export default async function Description({ params }: Props) {
+  const session = await auth();
   const description = await db.query.descriptions.findFirst({
-    where: eq(descriptions.id, params.id),
+    where: and(
+      eq(descriptions.id, params.id),
+      eq(descriptions.userId, session?.user?.id!)
+    ),
     with: {
       images: true,
     },
