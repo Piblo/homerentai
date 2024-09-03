@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
@@ -5,18 +7,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { auth, signOut } from "@/server/auth";
+import { signOut, useSession } from "next-auth/react";
 
 import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
 
-export const UserMenu = async () => {
-  const session = await auth();
-  if (!session?.user) {
+export const UserMenu = () => {
+  const { data } = useSession();
+  if (!data?.user) {
     return null;
   }
 
-  const initials = session.user.name
+  const initials = data?.user.name
     ?.split(" ")
     .map((n) => n[0])
     .join("");
@@ -26,28 +28,21 @@ export const UserMenu = async () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="size-8">
-            {session.user.image && <AvatarImage src={session.user.image} />}
+            {data.user.image && <AvatarImage src={data.user.image} />}
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
-        <form
-          action={async () => {
-            "use server";
-            await signOut();
-          }}
-        >
-          <DropdownMenuItem>
-            <button
-              type="submit"
-              className="flex items-center cursor-pointer w-full"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </button>
-          </DropdownMenuItem>
-        </form>
+        <DropdownMenuItem>
+          <button
+            className="flex items-center cursor-pointer w-full"
+            onClick={() => signOut({ callbackUrl: "/" })}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
+          </button>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

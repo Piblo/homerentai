@@ -1,3 +1,5 @@
+"use client";
+
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 import { Button } from "./ui/button";
@@ -5,20 +7,26 @@ import { DescriptionList } from "./DescriptionList";
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { UserMenu } from "./UserMenu";
+import { useState } from "react";
 
-export async function Nav() {
+export function Nav() {
+  const [sheetOpen, setSheetOpen] = useState(false);
+
   return (
     <nav className="py-4 px-6 flex items-center justify-between">
       <ul>
         <li className="lg:hidden">
-          <Sheet>
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger asChild>
               <Button size="icon" variant="outline">
                 <Menu />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-full">
-              <DescriptionList />
+              <DescriptionList
+                onDescriptionClick={() => setSheetOpen(false)}
+                onGenerateNewClick={() => setSheetOpen(false)}
+              />
             </SheetContent>
           </Sheet>
         </li>
@@ -29,22 +37,6 @@ export async function Nav() {
         </li>
       </ul>
       <ul className="flex items-center gap-4">
-        <li>
-          <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
-            href="#features"
-          >
-            Features
-          </Link>
-        </li>
-        <li>
-          <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
-            href="#how-it-works"
-          >
-            How It Works
-          </Link>
-        </li>
         <UserMenu />
       </ul>
     </nav>
