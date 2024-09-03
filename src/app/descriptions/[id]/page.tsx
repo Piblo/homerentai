@@ -1,3 +1,4 @@
+import { CopyButton } from "./CopyButton";
 import Image from "next/image";
 import { db } from "@/server/database/connection";
 import { descriptions } from "@/server/database/schema";
@@ -27,6 +28,8 @@ export default async function Description({ params }: Props) {
       <p className="text-muted-foreground max-w-[80ch] mb-4">
         {description.text}
       </p>
+
+      <CopyButton description={description.text} />
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {description.images.map((image) => (

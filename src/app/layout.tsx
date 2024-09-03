@@ -8,6 +8,7 @@ import { Nav } from "@/components/Nav";
 import { QueryClientProvider } from "@/components/QueryClientProvider";
 import { SessionProvider } from "next-auth/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Toaster } from "sonner";
 import { auth } from "@/server/auth";
 import clsx from "clsx";
 
@@ -34,6 +35,7 @@ export default async function RootLayout({
               <SpeedInsights />
               <Analytics />
             </Logger>
+            <Toaster theme="dark" />
           </SessionProvider>
         </QueryClientProvider>
       </body>
