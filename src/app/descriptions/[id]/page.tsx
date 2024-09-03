@@ -22,12 +22,10 @@ export default async function Description({ params }: Props) {
   }
 
   return (
-    <div>
+    <div className="max-w-[80ch]">
       <h2 className="text-xl mb-4">{description.title}</h2>
 
-      <p className="text-muted-foreground max-w-[80ch] mb-4">
-        {description.text}
-      </p>
+      <p className="text-muted-foreground mb-4">{description.text}</p>
 
       <CopyButton description={description.text} />
 
