@@ -34,7 +34,7 @@ export default async function DescriptionDetails({ params }: Props) {
         <h2 className="text-xl">{description.title}</h2>
         <CopyButton description={description.text} />
       </div>
-      <Description description={description.text} />
+      <Description id={description.id} description={description.text} />
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {description.images.map((image) => (
           <Image

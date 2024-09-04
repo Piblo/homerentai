@@ -1,12 +1,12 @@
 "use client";
 
+import { House, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { signIn, useSession } from "next-auth/react";
 
 import { Button } from "./ui/button";
 import { DescriptionList } from "./DescriptionList";
 import Link from "next/link";
-import { Menu } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 import { useState } from "react";
 
@@ -35,7 +35,8 @@ export function Nav() {
           </li>
         )}
         <li>
-          <Link className="font-bold" href="/">
+          <Link className="font-bold flex gap-2" href="/">
+            <House className="hidden lg:block" />
             Home Rent AI
           </Link>
         </li>
