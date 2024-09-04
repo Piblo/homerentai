@@ -30,8 +30,8 @@ export default async function DescriptionDetails({ params }: Props) {
 
   return (
     <div className="max-w-[80ch]">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl mb-4">{description.title}</h2>
+      <div className="mb-4 flex justify-between gap-4 md:items-center flex-col md:flex-row">
+        <h2 className="text-xl">{description.title}</h2>
         <CopyButton description={description.text} />
       </div>
       <Description description={description.text} />

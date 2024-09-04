@@ -20,7 +20,7 @@ export const CopyButton = ({ description }: Props) => {
   }
 
   return (
-    <Button className="mb-4" onClick={onClick}>
+    <Button onClick={onClick}>
       {!isCopied && <Copy className="mr-2 size-4" />}
       {isCopied && <Check className="mr-2 size-4" />}
       Copy description

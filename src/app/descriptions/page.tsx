@@ -32,8 +32,7 @@ export default async function Descriptions() {
             </p>
             <Button variant="secondary" asChild>
               <Link href="/pricing">
-                <Zap className="size-4 mr-1" /> Upgrade to Pro for unlimited
-                generations
+                <Zap className="size-4 mr-1" /> Upgrade to Pro
               </Link>
             </Button>
           </AlertDescription>

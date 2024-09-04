@@ -29,7 +29,7 @@ export function DescriptionList({
 
   return (
     <div className={cn("flex flex-col h-full items-start", className)}>
-      <Button asChild className="mb-4">
+      <Button asChild className="mb-4 w-full" variant="secondary">
         <Link href="/descriptions" onClick={onGenerateNewClick}>
           <Sparkles size={16} className="mr-2" />
           Generate new

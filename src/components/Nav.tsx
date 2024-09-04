@@ -41,6 +41,11 @@ export function Nav() {
         </li>
       </ul>
       <ul className="flex items-center gap-4">
+        <li>
+          <Button asChild variant="link">
+            <Link href="/pricing">Pricing</Link>
+          </Button>
+        </li>
         {session.status === "unauthenticated" && (
           <li>
             <Button
@@ -54,9 +59,11 @@ export function Nav() {
           </li>
         )}
         {session.status === "authenticated" && (
-          <li>
-            <UserMenu />
-          </li>
+          <>
+            <li>
+              <UserMenu />
+            </li>
+          </>
         )}
       </ul>
     </nav>
