@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Clipboard } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -21,8 +21,8 @@ export const CopyButton = ({ description }: Props) => {
 
   return (
     <Button className="mb-4" onClick={onClick}>
-      {!isCopied && <Clipboard size={16} className="mr-2" />}
-      {isCopied && <Check size={16} className="mr-2" />}
+      {!isCopied && <Copy className="mr-2 size-4" />}
+      {isCopied && <Check className="mr-2 size-4" />}
       Copy description
     </Button>
   );

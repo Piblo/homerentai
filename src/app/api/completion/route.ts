@@ -35,7 +35,9 @@ export const POST = auth(async (req) => {
   const { images } = (await req.json()) as CompletionRequest;
 
   const result = await streamText({
-    model: openai("gpt-4o-mini"),
+    model: openai("gpt-4o-mini", {
+      user: req.auth?.user.id,
+    }),
     maxTokens: 300,
     async onFinish({ text }) {
       await db

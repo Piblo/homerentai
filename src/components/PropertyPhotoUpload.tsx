@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import {
@@ -17,7 +18,6 @@ import { Label } from "@/components/ui/label";
 import { compressImage } from "@/utils/image";
 import { getPreSignedUrl } from "@/app/descriptions/actions";
 import { useCompletion } from "ai/react";
-import { useLogger } from "./Logger";
 
 type Image = {
   base64: string;
@@ -30,7 +30,6 @@ export function PropertyPhotoUpload() {
   const [error, setError] = useState<string | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
   const { completion, complete, isLoading } = useCompletion();
-  const { push } = useLogger();
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
@@ -61,22 +60,15 @@ export function PropertyPhotoUpload() {
 
     try {
       setImageUploading(true);
-      push("Uploading images...");
+
       const uploadedImages = await Promise.all(
         images.map(async (image) => {
           const compressedImage = await compressImage(image.file, 0.5);
-          push(`Original image size ${image.file.size} bytes`);
-          push(`Compressed image size ${compressedImage.size} bytes`);
-
           const { error, result } = await getPreSignedUrl(compressedImage.type);
-          push("Generated pre-signed URL");
 
           if (error !== undefined) {
-            push(`Error uploading image ${error}`);
             return;
           }
-
-          push("Uploading image to S3...");
 
           await fetch(result.url, {
             method: "PUT",
@@ -86,15 +78,11 @@ export function PropertyPhotoUpload() {
             },
           });
 
-          push("Image uploaded");
-
           return result.imageUrl;
         })
       );
 
       setImageUploading(false);
-
-      push("Generating completion...");
 
       complete("", {
         body: { images: uploadedImages, language: navigator.language },
@@ -110,10 +98,10 @@ export function PropertyPhotoUpload() {
   const loading = isLoading || imageUploading;
 
   return (
-    <div className="max-w-3xl">
+    <div>
       <Card>
         <CardHeader>
-          <CardTitle>Upload property photos</CardTitle>
+          <CardTitle className="mb-2">Upload property photos</CardTitle>
           <CardDescription>
             Upload photos of your property to generate a description for your
             Airbnb or Booking.com listing.
