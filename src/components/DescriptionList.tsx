@@ -31,7 +31,9 @@ export function DescriptionList({
   const { id } = useParams();
 
   return (
-    <div className={cn("flex flex-col h-full items-start mt-6", className)}>
+    <div
+      className={cn("flex flex-col h-full items-start mt-6 lg:mt-0", className)}
+    >
       <Button asChild className="mb-4 w-full" variant="secondary">
         <Link href="/descriptions" onClick={onGenerateNewClick}>
           <Sparkles size={16} className="mr-2" />
