@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
 
-export default function Component() {
+export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
@@ -22,12 +22,9 @@ export default function Component() {
                   more.
                 </p>
               </div>
-              <div className="space-x-4">
-                <Button asChild>
-                  <Link href="/descriptions">Get Started</Link>
-                </Button>
-                <Button variant="outline">Learn More</Button>
-              </div>
+              <Button className="w-[240px]" asChild>
+                <Link href="/descriptions">Get Started</Link>
+              </Button>
             </div>
           </div>
         </section>
@@ -128,8 +125,9 @@ export default function Component() {
                   attracting more guests with AI-powered descriptions.
                 </p>
               </div>
-              <Button className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
-                Get Started Now
+
+              <Button className="w-[240px]" asChild>
+                <Link href="/descriptions">Get Started Now</Link>
               </Button>
             </div>
           </div>

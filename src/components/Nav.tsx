@@ -41,8 +41,8 @@ export function Nav() {
           </Link>
         </li>
       </ul>
-      <ul className="flex items-center gap-4">
-        <li className="hidden md:block">
+      <ul className="flex items-center gap-6">
+        <li className="hidden lg:block">
           <Button className="p-0" asChild variant="link">
             <Link href="/descriptions">My descriptions</Link>
           </Button>
