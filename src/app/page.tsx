@@ -120,7 +120,7 @@ export default function HomePage() {
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                   Ready to Elevate Your Listings?
                 </h2>
-                <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
+                <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
                   Join thousands of property owners who are saving time and
                   attracting more guests with AI-powered descriptions.
                 </p>

@@ -9,6 +9,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 const pricingPlans = [
@@ -22,7 +23,10 @@ const pricingPlans = [
       "Up to 5 photos per description",
       "Standard support",
     ],
-    cta: "Get Started",
+    cta: {
+      label: "Get started",
+      href: "/descriptions",
+    },
     popular: false,
   },
   {
@@ -37,7 +41,10 @@ const pricingPlans = [
       "Rewrite descriptions in a different style",
       "Optional credits top up",
     ],
-    cta: "Subscribe to Pro",
+    cta: {
+      label: "Subscribe to Pro",
+      href: "/descriptions",
+    },
     popular: true,
   },
   {
@@ -52,7 +59,10 @@ const pricingPlans = [
       "Rewrite descriptions in a different style",
       "Optional credits top up",
     ],
-    cta: "Contact Sales",
+    cta: {
+      label: "Contact Sales",
+      href: "/descriptions",
+    },
     popular: false,
   },
 ];
@@ -92,10 +102,11 @@ export default function Pricing() {
               </CardContent>
               <CardFooter>
                 <Button
+                  asChild
                   className="w-full"
                   variant={plan.popular ? "default" : "outline"}
                 >
-                  {plan.cta}
+                  <Link href={plan.cta.href}>{plan.cta.label}</Link>
                 </Button>
               </CardFooter>
             </Card>

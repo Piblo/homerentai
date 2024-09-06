@@ -31,7 +31,7 @@ export const Description = ({ id, description }: Props) => {
     <div className="mb-4 space-y-4">
       <Textarea
         ref={ref}
-        className="h-auto"
+        className="h-auto overflow-hidden resize-none"
         value={desc}
         onChange={(e) => setDesc(e.target.value)}
       />
