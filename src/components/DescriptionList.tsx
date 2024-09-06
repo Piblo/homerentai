@@ -9,6 +9,7 @@ import { Skeleton } from "./ui/skeleton";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getUserDescriptions } from "@/actions/descriptions";
+import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
 type Props = {
@@ -27,8 +28,10 @@ export function DescriptionList({
     queryFn: () => getUserDescriptions(),
   });
 
+  const { id } = useParams();
+
   return (
-    <div className={cn("flex flex-col h-full items-start", className)}>
+    <div className={cn("flex flex-col h-full items-start mt-6", className)}>
       <Button asChild className="mb-4 w-full" variant="secondary">
         <Link href="/descriptions" onClick={onGenerateNewClick}>
           <Sparkles size={16} className="mr-2" />
@@ -44,7 +47,11 @@ export function DescriptionList({
                 className="group"
                 onClick={onDescriptionClick}
               >
-                <Card className="group-hover:bg-muted group-focus:bg-muted">
+                <Card
+                  className={cn("group-hover:bg-muted group-focus:bg-muted", {
+                    "bg-muted": id === description.id,
+                  })}
+                >
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base">
                       {description.title}

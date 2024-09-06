@@ -17,7 +17,7 @@ const pricingPlans = [
     price: "$0",
     description: "For individuals just getting started",
     features: [
-      "5 AI-generated descriptions per month",
+      "10 AI-generated descriptions per month",
       "Editable descriptions",
       "Up to 5 photos per description",
       "Standard support",

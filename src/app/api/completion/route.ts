@@ -34,6 +34,15 @@ export const POST = auth(async (req) => {
 
   const { images } = (await req.json()) as CompletionRequest;
 
+  if (subscription?.type === "free" && images.length > 5) {
+    return NextResponse.json(
+      {
+        message: "You can only upload up to 5 images with the free plan",
+      },
+      { status: 400 }
+    );
+  }
+
   const result = await streamText({
     model: openai("gpt-4o-mini", {
       user: req.auth?.user.id,

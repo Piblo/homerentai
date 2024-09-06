@@ -15,6 +15,11 @@ export default async function Descriptions() {
   const subscription = await db.query.subscriptions.findFirst({
     where: eq(subscriptions.userId, session?.user?.id!),
   });
+
+  if (!subscription) {
+    throw new Error("Subscription not found");
+  }
+
   return (
     <div className="max-w-screen-md">
       {subscription?.type === "free" && (
@@ -38,7 +43,7 @@ export default async function Descriptions() {
           </AlertDescription>
         </Alert>
       )}
-      <PropertyPhotoUpload />
+      <PropertyPhotoUpload subscription={subscription} />
     </div>
   );
 }

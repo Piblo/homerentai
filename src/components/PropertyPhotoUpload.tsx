@@ -15,6 +15,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Subscription } from "@/server/database/schema";
 import { compressImage } from "@/utils/image";
 import { getPreSignedUrl } from "@/app/descriptions/actions";
 import { useCompletion } from "ai/react";
@@ -25,11 +26,17 @@ type Image = {
   id: string;
 };
 
-export function PropertyPhotoUpload() {
+type Props = {
+  subscription: Subscription;
+};
+
+export function PropertyPhotoUpload({ subscription }: Props) {
   const [images, setImages] = useState<Image[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
-  const { completion, complete, isLoading } = useCompletion();
+  const { completion, complete, isLoading } = useCompletion({
+    onError: (error) => setError(JSON.parse(error.message).message),
+  });
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
@@ -51,8 +58,13 @@ export function PropertyPhotoUpload() {
   async function handleGenerateDescription() {
     if (images.length === 0) {
       setError(
-        "Please upload at least one image before generating a description."
+        "Please upload at least one image before generating a description"
       );
+      return;
+    }
+
+    if (subscription.type === "free" && images.length > 5) {
+      setError("You can only upload up to 5 images with the free plan");
       return;
     }
 
@@ -90,7 +102,7 @@ export function PropertyPhotoUpload() {
     } catch (err) {
       setImageUploading(false);
       setError(
-        "An error occurred while generating the description. Please try again."
+        "An error occurred while generating the description. Please try again"
       );
     }
   }

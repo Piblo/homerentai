@@ -20,7 +20,10 @@ export const users = pgTable("user", {
   image: text("image"),
 });
 
-export const subscriptionType = pgEnum("subscription_type", ["free"]);
+export const subscriptionType = pgEnum("subscription_type", [
+  "free",
+  "unlimited",
+]);
 
 export const subscriptions = pgTable("subscription", {
   id: text("id").primaryKey().$defaultFn(ulid),
@@ -32,6 +35,8 @@ export const subscriptions = pgTable("subscription", {
     .notNull()
     .default(10),
 });
+
+export type Subscription = typeof subscriptions.$inferSelect;
 
 export const descriptions = pgTable("description", {
   id: text("id").primaryKey().$defaultFn(ulid),

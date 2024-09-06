@@ -1,0 +1,1 @@
+ALTER TYPE "subscription_type" ADD VALUE 'unlimited';

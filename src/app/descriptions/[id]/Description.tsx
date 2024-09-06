@@ -1,9 +1,9 @@
 "use client";
 
+import { LoaderCircle, Save } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { LoaderCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { updateDescription } from "@/actions/descriptions";
@@ -46,7 +46,11 @@ export const Description = ({ id, description }: Props) => {
           })
         }
       >
-        {mutation.isPending && <LoaderCircle className="animate-spin mr-2" />}
+        {mutation.isPending ? (
+          <LoaderCircle className="size-4 animate-spin mr-2" />
+        ) : (
+          <Save className="size-4 mr-2" />
+        )}
         Save changes
       </Button>
     </div>
