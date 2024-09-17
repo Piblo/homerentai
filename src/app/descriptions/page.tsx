@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PropertyPhotoUpload } from "@/components/PropertyPhotoUpload";
 import { auth } from "@/server/auth";
+import { cn } from "@/lib/utils";
 import { db } from "@/server/database/connection";
 import { eq } from "drizzle-orm";
 import { subscriptions } from "@/server/database/schema";
@@ -23,7 +24,12 @@ export default async function Descriptions() {
   return (
     <div className="max-w-screen-md">
       {subscription?.type === "free" && (
-        <Alert role="status" className="mb-4">
+        <Alert
+          role="status"
+          className={cn("mb-4", {
+            "border-orange-500": subscription.remainingDescriptions === 0,
+          })}
+        >
           <Info className="size-5" />
           <AlertTitle className="flex justify-between">
             <span>Your subscription</span>

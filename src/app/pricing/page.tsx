@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import Script from "next/script";
 
 const pricingPlans = [
   {
@@ -43,7 +44,7 @@ const pricingPlans = [
     ],
     cta: {
       label: "Subscribe to Pro",
-      href: "/descriptions",
+      href: "/checkout",
     },
     popular: true,
   },
@@ -113,6 +114,10 @@ export default function Pricing() {
           ))}
         </div>
       </div>
+      <Script
+        src="https://app.lemonsqueezy.com/js/lemon.js"
+        strategy="lazyOnload"
+      />
     </main>
   );
 }
