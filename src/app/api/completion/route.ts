@@ -43,6 +43,8 @@ export const POST = auth(async (req) => {
     );
   }
 
+  console.log("Generating description...");
+
   const result = await streamText({
     model: openai("gpt-4o-mini", {
       user: req.auth?.user.id,

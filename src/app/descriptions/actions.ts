@@ -31,5 +31,7 @@ export async function getPreSignedUrl(
 
   const url = await getSignedUrl(client, command, { expiresIn: 60 });
 
+  console.log("Generated pre-signed URL");
+
   return { result: { url, imageUrl: url.split("?").at(0) ?? "" } };
 }
