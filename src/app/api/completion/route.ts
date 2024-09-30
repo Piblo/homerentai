@@ -16,6 +16,8 @@ type CompletionRequest = {
   language: string;
 };
 
+export const maxDuration = 30;
+
 export const POST = auth(async (req) => {
   if (!req.auth?.user?.id) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
