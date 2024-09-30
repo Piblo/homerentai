@@ -51,12 +51,15 @@ export const POST = auth(async (req) => {
     }),
     maxTokens: 300,
     async onFinish({ text }) {
+      console.log("Description generated");
       await db
         .update(subscriptions)
         .set({
           remainingDescriptions: sql`${subscriptions.remainingDescriptions} - 1`,
         })
         .where(eq(subscriptions.userId, req.auth?.user?.id!));
+
+      console.log("Updated remaining descriptions");
 
       await poolDb.transaction(async (tx) => {
         const [description] = await tx
@@ -70,12 +73,16 @@ export const POST = auth(async (req) => {
             id: descriptions.id,
           });
 
+        console.log("Description saved in DB");
+
         await tx.insert(imagesTable).values(
           images.map((image) => ({
             descriptionId: description.id,
             url: image,
           }))
         );
+
+        console.log("Images saved in DB");
       });
     },
     messages: [
