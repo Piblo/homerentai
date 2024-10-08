@@ -37,6 +37,13 @@ export async function POST(request: NextRequest) {
         throw new Error("Missing user_id in meta.custom_data");
       }
 
+      if (data.data.attributes.status !== "active") {
+        return NextResponse.json({
+          status: "ok",
+          message: "Subscription not active, webhook request ignored",
+        });
+      }
+
       await db
         .update(subscriptions)
         .set({
@@ -83,9 +90,19 @@ const metaSchema = z.object({
 const webhookRequestSchema = z.object({
   meta: metaSchema,
   data: z.object({
+    type: z.literal("subscriptions"),
     attributes: z.object({
       variant_id: z.number(),
       product_id: z.number(),
+      status: z.enum([
+        "on_trial",
+        "active",
+        "paused",
+        "past_due",
+        "unpaid",
+        "cancelled",
+        "expired",
+      ]),
     }),
   }),
 });
