@@ -77,8 +77,10 @@ const metaSchema = z.object({
 
 const webhookRequestSchema = z.object({
   meta: metaSchema,
-  attributes: z.object({
-    variant_id: z.number(),
-    product_id: z.number(),
+  data: z.object({
+    attributes: z.object({
+      variant_id: z.number(),
+      product_id: z.number(),
+    }),
   }),
 });
