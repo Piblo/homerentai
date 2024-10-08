@@ -25,12 +25,15 @@ export async function POST(request: NextRequest) {
   }
 
   const body = JSON.parse(requestText);
-  const { meta } = webhookRequestSchema.parse(body);
+  const { success, data, error } = webhookRequestSchema.safeParse(body);
+  if (!success) {
+    return NextResponse.json(error, { status: 400 });
+  }
 
-  switch (meta.event_name) {
+  switch (data.meta.event_name) {
     case "subscription_created":
     case "subscription_updated": {
-      if (!meta.custom_data?.user_id) {
+      if (!data.meta.custom_data?.user_id) {
         throw new Error("Missing user_id in meta.custom_data");
       }
 
@@ -40,10 +43,10 @@ export async function POST(request: NextRequest) {
           type: "pro",
           remainingDescriptions: 50,
         })
-        .where(eq(subscriptions.userId, meta.custom_data.user_id));
+        .where(eq(subscriptions.userId, data.meta.custom_data.user_id));
     }
     case "subscription_cancelled": {
-      if (!meta.custom_data?.user_id) {
+      if (!data.meta.custom_data?.user_id) {
         throw new Error("Missing user_id in meta.custom_data");
       }
 
@@ -53,10 +56,10 @@ export async function POST(request: NextRequest) {
           type: "free",
           remainingDescriptions: 10,
         })
-        .where(eq(subscriptions.userId, meta.custom_data.user_id));
+        .where(eq(subscriptions.userId, data.meta.custom_data.user_id));
     }
     default:
-      console.log("Unhandled webhook event: ", meta.event_name);
+      console.log("Unhandled webhook event: ", data.meta.event_name);
   }
 
   return NextResponse.json({ status: "ok" });
