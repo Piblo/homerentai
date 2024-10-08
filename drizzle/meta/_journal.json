@@ -43,6 +43,13 @@
       "when": 1725618624460,
       "tag": "0005_huge_micromacro",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1728408086665,
+      "tag": "0006_fine_scarecrow",
+      "breakpoints": true
     }
   ]
 }

@@ -22,6 +22,7 @@ export const users = pgTable("user", {
 
 export const subscriptionType = pgEnum("subscription_type", [
   "free",
+  "pro",
   "unlimited",
 ]);
 
