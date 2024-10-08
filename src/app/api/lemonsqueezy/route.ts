@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
           remainingDescriptions: 50,
         })
         .where(eq(subscriptions.userId, data.meta.custom_data.user_id));
+      return NextResponse.json({ status: "ok" });
     }
     case "subscription_cancelled": {
       if (!data.meta.custom_data?.user_id) {
@@ -57,6 +58,7 @@ export async function POST(request: NextRequest) {
           remainingDescriptions: 10,
         })
         .where(eq(subscriptions.userId, data.meta.custom_data.user_id));
+      return NextResponse.json({ status: "ok" });
     }
     default:
       console.log("Unhandled webhook event: ", data.meta.event_name);
