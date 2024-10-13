@@ -13,7 +13,7 @@ lemonSqueezySetup({
 });
 
 const STORE_ID = 121933;
-const PRO_SUBSCRIPTION_VARIANT_ID = 514642;
+export const PRO_SUBSCRIPTION_VARIANT_ID = 514642;
 
 export async function GET() {
   const session = await auth();

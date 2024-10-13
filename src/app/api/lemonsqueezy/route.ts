@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { custom, z } from "zod";
+import { eq, sql } from "drizzle-orm";
+import {
+  getSubscription,
+  lemonSqueezySetup,
+} from "@lemonsqueezy/lemonsqueezy.js";
 
+import { PRO_SUBSCRIPTION_VARIANT_ID } from "@/app/checkout/route";
 import crypto from "crypto";
 import { db } from "@/server/database/connection";
-import { eq } from "drizzle-orm";
 import { subscriptions } from "@/server/database/schema";
+import { z } from "zod";
+
+lemonSqueezySetup({
+  apiKey: process.env.LEMONSQUEEZY_API_KEY,
+});
 
 export async function POST(request: NextRequest) {
   const hmac = crypto.createHmac(
@@ -37,6 +46,10 @@ export async function POST(request: NextRequest) {
         throw new Error("Missing user_id in meta.custom_data");
       }
 
+      if (data.data.type !== "subscriptions") {
+        throw new Error("Unexpected data type");
+      }
+
       if (data.data.attributes.status !== "active") {
         return NextResponse.json({
           status: "ok",
@@ -48,7 +61,6 @@ export async function POST(request: NextRequest) {
         .update(subscriptions)
         .set({
           type: "pro",
-          remainingDescriptions: 50,
         })
         .where(eq(subscriptions.userId, data.meta.custom_data.user_id));
       return NextResponse.json({ status: "ok" });
@@ -62,10 +74,33 @@ export async function POST(request: NextRequest) {
         .update(subscriptions)
         .set({
           type: "free",
-          remainingDescriptions: 10,
         })
         .where(eq(subscriptions.userId, data.meta.custom_data.user_id));
       return NextResponse.json({ status: "ok" });
+    }
+    case "subscription_payment_success": {
+      if (data.data.type !== "subscription-invoices") {
+        throw new Error("Unexpected data type");
+      }
+
+      if (!data.meta.custom_data?.user_id) {
+        throw new Error("Missing user_id in meta.custom_data");
+      }
+
+      const subscription = await getSubscription(
+        data.data.attributes.subscription_id
+      );
+      if (
+        subscription.data?.data.attributes.variant_id ===
+        PRO_SUBSCRIPTION_VARIANT_ID
+      ) {
+        await db
+          .update(subscriptions)
+          .set({
+            remainingDescriptions: sql`${subscriptions.remainingDescriptions} + 50`,
+          })
+          .where(eq(subscriptions.userId, data.meta.custom_data.user_id));
+      }
     }
     default:
       console.log("Unhandled webhook event: ", data.meta.event_name);
@@ -79,6 +114,7 @@ const metaSchema = z.object({
     "subscription_created",
     "subscription_updated",
     "subscription_cancelled",
+    "subscription_payment_success",
   ]),
   custom_data: z
     .object({
@@ -87,22 +123,32 @@ const metaSchema = z.object({
     .optional(),
 });
 
+const subscriptionInvoiceSchema = z.object({
+  type: z.literal("subscription-invoices"),
+  id: z.string(),
+  attributes: z.object({
+    subscription_id: z.number(),
+  }),
+});
+
+const subscriptionSchema = z.object({
+  type: z.literal("subscriptions"),
+  attributes: z.object({
+    variant_id: z.number(),
+    product_id: z.number(),
+    status: z.enum([
+      "on_trial",
+      "active",
+      "paused",
+      "past_due",
+      "unpaid",
+      "cancelled",
+      "expired",
+    ]),
+  }),
+});
+
 const webhookRequestSchema = z.object({
   meta: metaSchema,
-  data: z.object({
-    type: z.literal("subscriptions"),
-    attributes: z.object({
-      variant_id: z.number(),
-      product_id: z.number(),
-      status: z.enum([
-        "on_trial",
-        "active",
-        "paused",
-        "past_due",
-        "unpaid",
-        "cancelled",
-        "expired",
-      ]),
-    }),
-  }),
+  data: z.union([subscriptionInvoiceSchema, subscriptionSchema]),
 });
