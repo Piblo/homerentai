@@ -5,7 +5,7 @@ import {
   lemonSqueezySetup,
 } from "@lemonsqueezy/lemonsqueezy.js";
 
-import { PRO_SUBSCRIPTION_VARIANT_ID } from "@/constants/lemonsqueezy";
+import { PRO_SUBSCRIPTION_PRODUCT_ID } from "@/constants/lemonsqueezy";
 import crypto from "crypto";
 import { db } from "@/server/database/connection";
 import { subscriptions } from "@/server/database/schema";
@@ -90,9 +90,14 @@ export async function POST(request: NextRequest) {
       const subscription = await getSubscription(
         data.data.attributes.subscription_id
       );
+
+      if (!subscription.data) {
+        throw new Error("Subscription not found");
+      }
+
       if (
-        subscription.data?.data.attributes.variant_id ===
-        PRO_SUBSCRIPTION_VARIANT_ID
+        subscription.data.data.attributes.product_id ===
+        PRO_SUBSCRIPTION_PRODUCT_ID
       ) {
         await db
           .update(subscriptions)
@@ -101,6 +106,8 @@ export async function POST(request: NextRequest) {
           })
           .where(eq(subscriptions.userId, data.meta.custom_data.user_id));
       }
+
+      return NextResponse.json({ status: "ok" });
     }
     default:
       console.log("Unhandled webhook event: ", data.meta.event_name);
