@@ -5,7 +5,7 @@ import {
   lemonSqueezySetup,
 } from "@lemonsqueezy/lemonsqueezy.js";
 
-import { PRO_SUBSCRIPTION_VARIANT_ID } from "@/app/checkout/route";
+import { PRO_SUBSCRIPTION_VARIANT_ID } from "@/constants/lemonsqueezy";
 import crypto from "crypto";
 import { db } from "@/server/database/connection";
 import { subscriptions } from "@/server/database/schema";

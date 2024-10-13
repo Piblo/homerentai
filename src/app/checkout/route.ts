@@ -1,6 +1,10 @@
 "use server";
 
 import {
+  PRO_SUBSCRIPTION_VARIANT_ID,
+  STORE_ID,
+} from "@/constants/lemonsqueezy";
+import {
   createCheckout,
   lemonSqueezySetup,
 } from "@lemonsqueezy/lemonsqueezy.js";
@@ -11,9 +15,6 @@ import { redirect } from "next/navigation";
 lemonSqueezySetup({
   apiKey: process.env.LEMONSQUEEZY_API_KEY,
 });
-
-const STORE_ID = 121933;
-export const PRO_SUBSCRIPTION_VARIANT_ID = 514642;
 
 export async function GET() {
   const session = await auth();
