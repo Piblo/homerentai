@@ -95,6 +95,8 @@ export async function POST(request: NextRequest) {
         throw new Error("Subscription not found");
       }
 
+      console.log("Subscription: ", subscription.data.data.attributes);
+
       if (
         subscription.data.data.attributes.product_id ===
         PRO_SUBSCRIPTION_PRODUCT_ID
